@@ -13,7 +13,6 @@ import {type AllNavigatorParams, type RouteParams} from '#/lib/routes/types'
 import {shareUrl} from '#/lib/sharing'
 import {
   convertBskyAppUrlIfNeeded,
-  createProxiedUrl,
   isBskyDownloadUrl,
   isExternalUrl,
   linkRequiresWarning,
@@ -444,9 +443,6 @@ export function SimpleInlineLinkText({
   const isExternal = isExternalUrl(to)
 
   let href = to
-  if (shouldProxy) {
-    href = createProxiedUrl(href)
-  }
 
   const onPress = (e: GestureResponderEvent) => {
     const exitEarlyIfFalse = outerOnPress?.(e)

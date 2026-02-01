@@ -4,7 +4,6 @@ import * as WebBrowser from 'expo-web-browser'
 
 import {
   createBskyAppAbsoluteUrl,
-  createProxiedUrl,
   isBskyAppUrl,
   isBskyRSSUrl,
   isRelativeUrl,
@@ -27,6 +26,10 @@ export function useOpenLink() {
 
   const openLink = useCallback(
     async (url: string, override?: boolean, shouldProxy?: boolean) => {
+      if (shouldProxy) {
+        logger.debug('i dont feel like it')
+      }
+
       if (isBskyRSSUrl(url) && isRelativeUrl(url)) {
         url = createBskyAppAbsoluteUrl(url)
       }
@@ -36,10 +39,6 @@ export function useOpenLink() {
           domain: toNiceDomain(url),
           url,
         })
-
-        if (shouldProxy) {
-          url = createProxiedUrl(url)
-        }
       }
 
       if (IS_NATIVE && !url.startsWith('mailto:')) {

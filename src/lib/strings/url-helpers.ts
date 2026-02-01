@@ -5,7 +5,6 @@ import TLDs from 'tlds'
 import {BSKY_SERVICE} from '#/lib/constants'
 import {isInvalidHandle} from '#/lib/strings/handles'
 import {startUriToStarterPackUri} from '#/lib/strings/starter-pack'
-import {logger} from '#/logger'
 
 export const BSKY_APP_HOST = 'https://bsky.app'
 const BSKY_TRUSTED_HOSTS = [
@@ -203,9 +202,6 @@ export function convertBskyAppUrlIfNeeded(url: string): string {
     } catch (e) {
       console.error('Unexpected error in convertBskyAppUrlIfNeeded()', e)
     }
-  } else if (isShortLink(url)) {
-    // We only want to do this on native, web handles the 301 for us
-    return shortLinkToHref(url)
   }
   return url
 }
@@ -324,41 +320,6 @@ export function splitApexDomain(hostname: string): [string, string] {
 export function createBskyAppAbsoluteUrl(path: string): string {
   const sanitizedPath = path.replace(BSKY_APP_HOST, '').replace(/^\/+/, '')
   return `${BSKY_APP_HOST.replace(/\/$/, '')}/${sanitizedPath}`
-}
-
-export function createProxiedUrl(url: string): string {
-  let u
-  try {
-    u = new URL(url)
-  } catch {
-    return url
-  }
-
-  if (u?.protocol !== 'http:' && u?.protocol !== 'https:') {
-    return url
-  }
-
-  return `https://go.bsky.app/redirect?u=${encodeURIComponent(url)}`
-}
-
-export function isShortLink(url: string): boolean {
-  return url.startsWith('https://go.bsky.app/')
-}
-
-export function shortLinkToHref(url: string): string {
-  try {
-    const urlp = new URL(url)
-
-    // For now we only support starter packs, but in the future we should add additional paths to this check
-    const parts = urlp.pathname.split('/').filter(Boolean)
-    if (parts.length === 1) {
-      return `/starter-pack-short/${parts[0]}`
-    }
-    return url
-  } catch (e) {
-    logger.error('Failed to parse possible short link', {safeMessage: e})
-    return url
-  }
 }
 
 export function getHostnameFromUrl(url: string | URL): string | null {

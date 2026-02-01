@@ -124,10 +124,7 @@ import {RepostsOnRepostsNotificationSettingsScreen} from '#/screens/Settings/Not
 import {PrivacyAndSecuritySettingsScreen} from '#/screens/Settings/PrivacyAndSecuritySettings'
 import {SettingsScreen} from '#/screens/Settings/Settings'
 import {ThreadPreferencesScreen} from '#/screens/Settings/ThreadPreferences'
-import {
-  StarterPackScreen,
-  StarterPackScreenShort,
-} from '#/screens/StarterPack/StarterPackScreen'
+import {StarterPackScreen} from '#/screens/StarterPack/StarterPackScreen'
 import {Wizard} from '#/screens/StarterPack/Wizard'
 import TopicScreen from '#/screens/Topic'
 import {VideoFeed} from '#/screens/VideoFeed'
@@ -587,11 +584,6 @@ function commonScreens(Stack: typeof Flat, unreadCountLabel?: string) {
       <Stack.Screen
         name="StarterPack"
         getComponent={() => StarterPackScreen}
-        options={{title: title(msg`Starter Pack`)}}
-      />
-      <Stack.Screen
-        name="StarterPackShort"
-        getComponent={() => StarterPackScreenShort}
         options={{title: title(msg`Starter Pack`)}}
       />
       <Stack.Screen

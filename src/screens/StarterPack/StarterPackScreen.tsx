@@ -4,7 +4,6 @@ import {Image} from 'expo-image'
 import {
   AppBskyGraphDefs,
   AppBskyGraphStarterpack,
-  AtUri,
   type ModerationOpts,
   RichText as RichTextAPI,
 } from '@atproto/api'
@@ -18,7 +17,7 @@ import {useQueryClient} from '@tanstack/react-query'
 import {batchedUpdates} from '#/lib/batchedUpdates'
 import {HITSLOP_20} from '#/lib/constants'
 import {isBlockedOrBlocking, isMuted} from '#/lib/moderation/blocked-and-muted'
-import {makeProfileLink, makeStarterPackLink} from '#/lib/routes/links'
+import {makeProfileLink} from '#/lib/routes/links'
 import {
   type CommonNavigatorParams,
   type NavigationProp,
@@ -29,9 +28,7 @@ import {logger} from '#/logger'
 import {updateProfileShadow} from '#/state/cache/profile-shadow'
 import {useModerationOpts} from '#/state/preferences/moderation-opts'
 import {getAllListMembers} from '#/state/queries/list-members'
-import {useResolvedStarterPackShortLink} from '#/state/queries/resolve-short-link'
 import {useResolveDidQuery} from '#/state/queries/resolve-uri'
-import {useShortenLink} from '#/state/queries/shorten-link'
 import {
   useDeleteStarterPackMutation,
   useStarterPackQuery,
@@ -80,44 +77,11 @@ type StarterPackScreeProps = NativeStackScreenProps<
   CommonNavigatorParams,
   'StarterPack'
 >
-type StarterPackScreenShortProps = NativeStackScreenProps<
-  CommonNavigatorParams,
-  'StarterPackShort'
->
 
 export function StarterPackScreen({route}: StarterPackScreeProps) {
   return (
     <Layout.Screen>
       <StarterPackScreenInner routeParams={route.params} />
-    </Layout.Screen>
-  )
-}
-
-export function StarterPackScreenShort({route}: StarterPackScreenShortProps) {
-  const {_} = useLingui()
-  const {
-    data: resolvedStarterPack,
-    isLoading,
-    isError,
-  } = useResolvedStarterPackShortLink({
-    code: route.params.code,
-  })
-
-  if (isLoading || isError || !resolvedStarterPack) {
-    return (
-      <Layout.Screen>
-        <ListMaybePlaceholder
-          isLoading={isLoading}
-          isError={isError}
-          errorMessage={_(msg`That starter pack could not be found.`)}
-          emptyMessage={_(msg`That starter pack could not be found.`)}
-        />
-      </Layout.Screen>
-    )
-  }
-  return (
-    <Layout.Screen>
-      <StarterPackScreenInner routeParams={resolvedStarterPack} />
     </Layout.Screen>
   )
 }
@@ -197,8 +161,7 @@ function StarterPackScreenLoaded({
   const qrCodeDialogControl = useDialogControl()
   const shareDialogControl = useDialogControl()
 
-  const shortenLink = useShortenLink()
-  const [link, setLink] = React.useState<string>()
+  const [link] = React.useState<string>()
   const [imageLoaded, setImageLoaded] = React.useState(false)
 
   React.useEffect(() => {
@@ -208,12 +171,6 @@ function StarterPackScreenLoaded({
   }, [ax, starterPack.uri])
 
   const onOpenShareDialog = React.useCallback(() => {
-    const rkey = new AtUri(starterPack.uri).rkey
-    shortenLink(makeStarterPackLink(starterPack.creator.did, rkey)).then(
-      res => {
-        setLink(res.url)
-      },
-    )
     Image.prefetch(getStarterPackOgCard(starterPack))
       .then(() => {
         setImageLoaded(true)
@@ -222,7 +179,7 @@ function StarterPackScreenLoaded({
         setImageLoaded(true)
       })
     shareDialogControl.open()
-  }, [shareDialogControl, shortenLink, starterPack])
+  }, [shareDialogControl, starterPack])
 
   React.useEffect(() => {
     if (routeParams.new) {
