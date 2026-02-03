@@ -462,8 +462,8 @@ export type Events = {
       | 'InterstitialProfile'
       | 'Profile'
       | 'Onboarding'
-    location: 'Card' | 'Profile'
-    recId?: number
+    location: 'Card' | 'Profile' | 'FollowAll'
+    recId?: number | string
     position: number
     suggestedDid: string
     category: string | null
@@ -474,7 +474,7 @@ export type Events = {
       | 'InterstitialDiscover'
       | 'InterstitialProfile'
       | 'Onboarding'
-    recId?: number
+    recId?: number | string
     position: number
     suggestedDid: string
     category: string | null
@@ -487,7 +487,7 @@ export type Events = {
       | 'Profile'
       | 'Onboarding'
       | 'ProgressGuide'
-    recId?: number
+    recId?: number | string
     position: number
     suggestedDid: string
     category: string | null
@@ -502,7 +502,7 @@ export type Events = {
   }
   'suggestedUser:dismiss': {
     logContext: 'InterstitialDiscover' | 'InterstitialProfile'
-    recId?: number
+    recId?: number | string
     position: number
     suggestedDid: string
   }
